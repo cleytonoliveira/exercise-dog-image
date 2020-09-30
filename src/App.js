@@ -31,6 +31,7 @@ class App extends Component {
     return loading ? loadingMessage : (
       <div className="App">
         <img src={imageDog} alt="Random dogs" />
+        <button onClick={this.fetchRandomImageDog}>Next Dog</button>
       </div>
     );
   }
