@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      imageDog: '',
+      loading: true,
+    }
+    this.fetchRandomImageDog = this.fetchRandomImageDog.bind(this);
+  }
+
+  componentDidMount() {
+    this.fetchRandomImageDog();
+  }
+
+  async fetchRandomImageDog() {
+    const resultoRandomImageDog = await fetch('https://dog.ceo/api/breeds/image/random');
+    const randomImageDog = await resultoRandomImageDog.json();
+    const imageDog = randomImageDog.message;
+    this.setState({
+      imageDog,
+      loading: false,
+    });
+  }
+
+  render() {
+    const { imageDog, loading } = this.state;
+    const loadingMessage = <span>Loading...</span>
+    return loading ? loadingMessage : (
+      <div className="App">
+        <img src={imageDog} alt="Random dogs" />
+      </div>
+    );
+  }
 }
 
 export default App;
