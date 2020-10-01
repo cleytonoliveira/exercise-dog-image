@@ -11,6 +11,21 @@ class App extends Component {
     this.fetchRandomImageDog = this.fetchRandomImageDog.bind(this);
   }
 
+  shouldComponentUpdate(_nextPros, nextState) {
+    const dog = 'terrier';
+    if (nextState.imageDog.includes(dog)) {
+      return false;
+    }
+    return true;
+  }
+
+  componentDidUpdate() {
+    const { imageDog } = this.state
+    localStorage.setItem('dogURL',imageDog);
+    const dogBreed = imageDog.split('/')[4];
+    alert(dogBreed);
+  }
+
   componentDidMount() {
     this.fetchRandomImageDog();
   }
@@ -30,8 +45,11 @@ class App extends Component {
     const loadingMessage = <span>Loading...</span>
     return loading ? loadingMessage : (
       <div className="App">
-        <img src={imageDog} alt="Random dogs" />
+        <p>Dogs</p>
         <button onClick={this.fetchRandomImageDog}>Next Dog</button>
+        <div>
+          <img src={imageDog} alt="Random dogs" />
+        </div>
       </div>
     );
   }
