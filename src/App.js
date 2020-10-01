@@ -5,28 +5,40 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      imageDog: '',
+      imageDog: "",
       loading: true,
+      name: "",
+      array: [],
     }
     this.fetchRandomImageDog = this.fetchRandomImageDog.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.saveData = this.saveData.bind(this);
   }
 
   shouldComponentUpdate(_nextPros, nextState) {
-    const dog = 'terrier';
+    const dog = "terrier";
     if (nextState.imageDog.includes(dog)) {
       return false;
     }
     return true;
   }
 
-  componentDidUpdate() {
-    const { imageDog } = this.state
-    localStorage.setItem('dogURL',imageDog);
-    const dogBreed = imageDog.split('/')[4];
-    alert(dogBreed);
+  componentDidUpdate(_prevProps, prevState) {
+    const { imageDog, array } = this.state
+    if(prevState.imageDog !== imageDog) {
+      const dogBreed = imageDog.split('/')[4];
+      return alert(dogBreed);
+    }
+    localStorage.setItem("dogURL", JSON.stringify(array));
   }
 
   componentDidMount() {
+    if(localStorage.dogURL) {
+      const parseStorage = JSON.parse(localStorage.dogURL);
+      const lastDog = parseStorage[parseStorage.length - 1].imageDog;
+      console.log(lastDog);
+      return this.setState({ imageDog: lastDog });
+    }
     this.fetchRandomImageDog();
   }
 
@@ -40,13 +52,36 @@ class App extends Component {
     });
   }
 
+  handleChange({ target }) {
+    const name = target.value;
+    this.setState({ name });
+  }
+
+  saveData() {
+    const { imageDog, name, array } = this.state;
+    const dogData = { imageDog, name };
+    const newArray = [...array, dogData];
+    this.setState({ array: newArray });
+    this.setState({ name: "" });
+  }
+
   render() {
-    const { imageDog, loading } = this.state;
+    const { imageDog, name } = this.state;
     const loadingMessage = <span>Loading...</span>
-    return loading ? loadingMessage : (
+    if (imageDog === "") return loadingMessage;
+    return (
       <div className="App">
         <p>Dogs</p>
         <button onClick={this.fetchRandomImageDog}>Next Dog</button>
+        <div>
+          <input
+            type="text"
+            value={name}
+            onChange={this.handleChange}
+            placeholder="digite o nome do doguinho"
+          />
+          <button onClick={this.saveData}>Salvar doguinho</button>
+        </div>
         <div>
           <img src={imageDog} alt="Random dogs" />
         </div>
